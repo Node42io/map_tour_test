@@ -1,0 +1,132 @@
+/* App-level styles for the Customer Map → Value Network mockup. Design tokens
+   come from @node42/ui-kit (tokens.scss); nothing here re-defines a colour. */
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: var(--font-family-sans);
+  color: var(--text-body);
+  background: var(--color-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Map ─────────────────────────────────────────────────────────────────── */
+.leaflet-container {
+  background: var(--secondary-25);
+  font-family: var(--font-family-sans);
+}
+/* Nudge the (unlabelled) basemap tiles a touch greyer / lighter so the brand
+   pins and the floating panels carry the colour. */
+.n42-tiles { filter: grayscale(0.4) contrast(0.98) brightness(1.02); }
+.n42-pin { background: none; border: none; }
+
+/* Branded map tooltip */
+.leaflet-tooltip.n42-tip {
+  background: var(--secondary-default);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: 6px 10px;
+  font-family: var(--font-family-sans);
+  font-size: 12px;
+  box-shadow: var(--shadow-s);
+}
+.leaflet-tooltip.n42-tip::before { display: none; }
+
+/* ── Floating customer sidebar ───────────────────────────────────────────── */
+.n42-sidebar {
+  position: absolute;
+  top: var(--space-500);
+  left: var(--space-500);
+  bottom: var(--space-500);
+  width: 320px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--surface-default-default) 92%, transparent);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-l);
+  overflow: hidden;
+}
+
+.n42-co-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-200);
+  width: 100%;
+  padding: var(--space-300);
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  transition: background 120ms ease;
+}
+.n42-co-row:hover { background: var(--surface-default-default-2); }
+.n42-co-row[data-selected='true'] { background: var(--surface-selected-colored); }
+.n42-co-arrow { color: var(--icon-description); opacity: 0; transform: translateX(-4px); transition: all 120ms ease; flex-shrink: 0; }
+.n42-co-row:hover .n42-co-arrow,
+.n42-co-row[data-selected='true'] .n42-co-arrow { opacity: 1; transform: none; }
+
+/* ── Legend ──────────────────────────────────────────────────────────────── */
+.n42-legend {
+  position: absolute;
+  bottom: var(--space-500);
+  right: var(--space-500);
+  z-index: 500;
+  display: flex;
+  gap: var(--space-400);
+  align-items: center;
+  padding: var(--space-300) var(--space-400);
+  background: color-mix(in srgb, var(--surface-default-default) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-s);
+}
+
+/* ── Overlay modal (the blurred-map spotlight) ───────────────────────────── */
+.n42-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vh, 48px);
+  /* Blur + dim the live map (and everything) behind the dialog. */
+  background: color-mix(in srgb, var(--secondary-default) 34%, transparent);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  animation: n42-fade 180ms ease both;
+}
+.n42-modal {
+  width: min(1280px, 100%);
+  height: min(920px, 100%);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-default-default);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 80px rgba(20, 22, 25, 0.35);
+  overflow: hidden;
+  animation: n42-pop 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes n42-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes n42-pop {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Thin, unobtrusive scrollbars inside the modal + sidebar. */
+.n42-modal *::-webkit-scrollbar,
+.n42-sidebar *::-webkit-scrollbar { width: 8px; height: 8px; }
+.n42-modal *::-webkit-scrollbar-thumb,
+.n42-sidebar *::-webkit-scrollbar-thumb { background: var(--surface-default-selected); border-radius: var(--radius-full); }
